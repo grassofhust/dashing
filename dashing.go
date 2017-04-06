@@ -14,6 +14,7 @@ import (
 	"regexp"
 	"strings"
 	"text/template"
+	"unicode/utf8"
 
 	css "github.com/andybalholm/cascadia"
 	"github.com/codegangsta/cli"
@@ -21,6 +22,7 @@ import (
 	"golang.org/x/net/html/atom"
 
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/mozillazg/go-pinyin"
 )
 
 const plist = `<?xml version="1.0" encoding="UTF-8"?>
@@ -369,8 +371,14 @@ func texasRanger(base string, base_depth int, name string, dashing Dashing, db *
 				return nil
 			}
 			for _, ref := range found {
-				fmt.Printf("Match: '%s' is type %s at %s\n", ref.name, ref.etype, ref.href)
-				db.Exec(`INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES (?,?,?)`, ref.name, ref.etype, ref.href)
+				py := toPinyin(ref.name)
+				if ref.name != py {
+					fmt.Printf("Match: '%s' is type %s at %s\n", py, ref.etype, ref.href)
+					db.Exec(`INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES (?,?,?)`, py, ref.etype, ref.href)
+				} else {
+					fmt.Printf("Match: '%s' is type %s at %s\n", ref.name, ref.etype, ref.href)
+					db.Exec(`INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES (?,?,?)`, ref.name, ref.etype, ref.href)
+				}
 			}
 		} else {
 			// Or we just copy the file.
@@ -873,4 +881,27 @@ var point_to_entity = map[rune]string{
 	165:  "&yen;",
 	8657: "&uArr;",
 	9001: "&lang;",
+}
+
+func toPinyin(src string) string {
+	option := pinyin.NewArgs()
+    option.Style = pinyin.FirstLetter
+	var buffer bytes.Buffer
+	for _, chr := range src {
+		pyChr := ""
+		if utf8.RuneLen(chr) <= 1 {
+		} else {
+			pyChr = strings.Join(pinyin.LazyPinyin(string(chr), option), "")
+		}
+		buffer.WriteString(pyChr)
+	}
+	py := buffer.String()
+	if py == src {
+		return py
+	}
+	var str bytes.Buffer
+	str.WriteString(src)
+	str.WriteString(" ")
+	str.WriteString(py)
+	return str.String()
 }
