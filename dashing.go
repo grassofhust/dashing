@@ -896,8 +896,8 @@ func toPinyin(src string) string {
 		buffer.WriteString(pyChr)
 	}
 	py := buffer.String()
-	if py == src {
-		return py
+	if py == src || py == "" {
+		return src
 	}
 	var str bytes.Buffer
 	str.WriteString(src)
