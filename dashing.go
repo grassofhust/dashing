@@ -542,7 +542,7 @@ func text(node *html.Node) string {
 			b.WriteString(text(c))
 		}
 	}
-	return strings.TrimSpace(b.String())
+	return strings.TrimSpace(strings.Replace(b.String(), "\n", " ", -1))
 }
 
 func attr(node *html.Node, key string) string {
