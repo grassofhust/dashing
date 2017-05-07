@@ -885,7 +885,7 @@ var point_to_entity = map[rune]string{
 
 func toPinyin(src string) string {
 	option := pinyin.NewArgs()
-    option.Style = pinyin.FirstLetter
+	option.Style = pinyin.FirstLetter
 	var buffer bytes.Buffer
 	for _, chr := range src {
 		pyChr := ""
