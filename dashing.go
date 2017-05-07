@@ -534,6 +534,11 @@ func ignored(n string) bool {
 }
 
 func text(node *html.Node) string {
+	str := _text(node)
+	return strings.Join(strings.Fields(strings.TrimSpace(strings.Replace(str, "\n", " ", -1))), " ")
+}
+
+func _text(node *html.Node) string {
 	var b bytes.Buffer
 	for c := node.FirstChild; c != nil; c = c.NextSibling {
 		if c.Type == html.TextNode {
@@ -542,7 +547,7 @@ func text(node *html.Node) string {
 			b.WriteString(text(c))
 		}
 	}
-	return strings.TrimSpace(strings.Replace(b.String(), "\n", " ", -1))
+	return b.String()
 }
 
 func attr(node *html.Node, key string) string {
