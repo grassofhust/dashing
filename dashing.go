@@ -371,14 +371,9 @@ func texasRanger(base string, base_depth int, name string, dashing Dashing, db *
 				return nil
 			}
 			for _, ref := range found {
-				py := toPinyin(ref.name)
-				if ref.name != py {
-					fmt.Printf("Match: '%s' is type %s at %s\n", py, ref.etype, ref.href)
-					db.Exec(`INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES (?,?,?)`, py, ref.etype, ref.href)
-				} else {
-					fmt.Printf("Match: '%s' is type %s at %s\n", ref.name, ref.etype, ref.href)
-					db.Exec(`INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES (?,?,?)`, ref.name, ref.etype, ref.href)
-				}
+				name := toPinyin(ref.name)
+				fmt.Printf("Match: '%s' is type %s at %s\n", name, ref.etype, ref.href)
+				db.Exec(`INSERT OR IGNORE INTO searchIndex(name, type, path) VALUES (?,?,?)`, name, ref.etype, ref.href)
 			}
 		} else {
 			// Or we just copy the file.
