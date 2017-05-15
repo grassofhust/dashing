@@ -890,6 +890,7 @@ func toPinyin(src string) string {
 	for _, chr := range src {
 		pyChr := ""
 		if utf8.RuneLen(chr) <= 1 {
+			pyChr = fmt.Sprintf("%c", chr)
 		} else {
 			pyChr = strings.Join(pinyin.LazyPinyin(string(chr), option), "")
 		}
