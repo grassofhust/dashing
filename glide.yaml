@@ -7,3 +7,4 @@ import:
   - package: github.com/mattn/go-sqlite3
   - package: github.com/andybalholm/cascadia
   - package: gopkg.in/yaml.v2
+  - package: github.com/mozillazg/go-pinyin
